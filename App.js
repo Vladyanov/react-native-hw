@@ -52,10 +52,10 @@ export default function App() {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
-    if (!fontsLoaded) {
-      return null;
-    }
   }, [fontsLoaded]);
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
