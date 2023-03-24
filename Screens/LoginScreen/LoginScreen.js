@@ -19,7 +19,7 @@ const initialState = {
   password: "",
 };
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [focused, setFocused] = useState("");
   const [state, setState] = useState(initialState);
@@ -115,7 +115,7 @@ export default function LoginScreen() {
               {!isShowKeyboard && (
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => navigation.navigate("Register")}
+                  onPress={() => navigation.navigate("register")}
                 >
                   <Text style={styles.signinText}>
                     Don't have an account? Register
