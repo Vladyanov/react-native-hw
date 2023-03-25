@@ -58,7 +58,7 @@ export const useRoute = (isAuth) => {
           headerRight: () => (
             <TouchableOpacity
               style={{ marginRight: 10 }}
-              //   onPress={() => navigation.navigate("Login")}
+              //   onPress={() => navigation.navigate("login")}
             >
               <Image
                 source={require("./assets/logout.jpg")}
