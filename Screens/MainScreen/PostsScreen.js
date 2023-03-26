@@ -1,32 +1,47 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, SafeAreaView, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Image, FlatList, View } from "react-native";
 
-const POSTS = [];
+const PostsScreen = ({ route }) => {
+  const [posts, setPosts] = useState([]);
+  console.log("route.params", route.params);
 
-const PostsScreen = () => {
-  const [posts, setposts] = useState(POSTS);
-
+  useEffect(() => {
+    if (route.params) {
+      setPosts((prevState) => [...prevState, route.params]);
+    }
+  }, [route.params]);
+  console.log("posts", posts);
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.someText}>Posts body</Text>
+    <View style={styles.container}>
       <FlatList
         data={posts}
-        renderItem={({ item }) => <Text>{item.title}</Text>}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View
+            style={{
+              marginBottom: 5,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Image
+              source={{ uri: item.photo }}
+              style={{ width: "100%", height: 200 }}
+            />
+          </View>
+        )}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    // alignItems: "center",
     justifyContent: "center",
+    marginHorizontal: 16,
     backgroundColor: "#ecf0f1",
-  },
-  someText: {
-    color: "#000",
   },
 });
 
