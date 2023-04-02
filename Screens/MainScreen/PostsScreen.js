@@ -38,8 +38,7 @@ const PostsScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
     marginHorizontal: 16,
     backgroundColor: "#ecf0f1",
   },
