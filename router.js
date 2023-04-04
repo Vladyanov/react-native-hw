@@ -50,23 +50,7 @@ export const useRoute = (isAuth) => {
       <MainTab.Screen
         options={{
           tabBarShowLabel: false,
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontWeight: "bold",
-            fontSize: 20,
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              style={{ marginRight: 10 }}
-              //   onPress={() => navigation.navigate("login")}
-            >
-              <Image
-                source={require("./assets/logout.jpg")}
-                style={{ width: 24, height: 24 }}
-              />
-            </TouchableOpacity>
-          ),
-
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <SvgPosts color={color} size={size} />
           ),
@@ -87,6 +71,22 @@ export const useRoute = (isAuth) => {
       <MainTab.Screen
         options={{
           tabBarShowLabel: false,
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            fontWeight: "bold",
+            fontSize: 20,
+          },
+          headerRight: () => (
+            <TouchableOpacity
+              style={{ marginRight: 10 }}
+              //   onPress={() => navigation.navigate("login")}
+            >
+              <Image
+                source={require("./assets/logout.jpg")}
+                style={{ width: 24, height: 24 }}
+              />
+            </TouchableOpacity>
+          ),
           tabBarIcon: ({ color, size }) => (
             <SvgProfile color={color} size={size} />
           ),
