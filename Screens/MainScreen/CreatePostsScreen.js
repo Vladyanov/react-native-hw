@@ -8,30 +8,30 @@ import SvgCameraShot from "../../assets/svg/cameraShot";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
-  const [photo, setPhoto] = useState("");
+  const [photo, setPhoto] = useState(undefined);
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
-    // const location = await Location.getCurrentPositionAsync({});
-    // console.log("latitude", location.coords.latitude);
-    // console.log("longitude", location.coords.longitude);
+    const location = await Location.getCurrentPositionAsync({});
+    console.log("latitude", location.coords.latitude);
+    console.log("longitude", location.coords.longitude);
   };
 
   // запрос на предоставление данных локации
-  // useEffect(() => {
-  //   (async () => {
-  //     let { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       setErrorMsg("Permission to access location was denied");
-  //       return;
-  //     }
-  //   })();
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+    })();
+  }, []);
 
   const sendPhoto = () => {
-    console.log("navigation", navigation);
-    navigation.navigate("Posts", { photo });
+    // console.log("navigation", navigation);
+    navigation.navigate("DefaultScreen", { photo });
   };
 
   return (
