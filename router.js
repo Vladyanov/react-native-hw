@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -17,10 +18,18 @@ import SvgPosts from "./assets/svg/postsIcon";
 import SvgCreate from "./assets/svg/createIcon";
 import SvgProfile from "./assets/svg/profileIcon";
 
+// import { auth } from "./firebase/config";
+// import { authSignOutUser } from "./redux/auth/authOperations";
+import SvgLogout from "./assets/svg/logoutIcon";
+
 const AuthStack = createStackNavigator();
 const MainTab = createBottomTabNavigator();
 
 export const useRoute = (isAuth) => {
+  // const signOut = () => {
+  //   dispatch(authSignOutUser());
+  // };
+
   if (!isAuth) {
     return (
       <AuthStack.Navigator>
@@ -76,17 +85,13 @@ export const useRoute = (isAuth) => {
             fontWeight: "bold",
             fontSize: 20,
           },
-          headerRight: () => (
-            <TouchableOpacity
-              style={{ marginRight: 10 }}
-              //   onPress={() => navigation.navigate("login")}
-            >
-              <Image
-                source={require("./assets/logout.jpg")}
-                style={{ width: 24, height: 24 }}
-              />
-            </TouchableOpacity>
-          ),
+          headerRight: () => <SvgLogout />,
+          // <TouchableOpacity style={{ marginRight: 10 }} onPress={signOut}>
+          //   <Image
+          //     source={require("./assets/logout.jpg")}
+          //     style={{ width: 24, height: 24 }}
+          //   />
+          // </TouchableOpacity>
           tabBarIcon: ({ color, size }) => (
             <SvgProfile color={color} size={size} />
           ),

@@ -1,7 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { useDispatch } from "react-redux";
 
 const ProfileScreen = () => {
+  const dispatch = useDispatch();
   return (
     <View style={styles.container}>
       <Text>ProfileScreen</Text>

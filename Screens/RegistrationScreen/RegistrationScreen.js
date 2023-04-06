@@ -14,6 +14,10 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 
+import { useDispatch } from "react-redux";
+
+import { authSignUpUser } from "../../redux/auth/authOperations";
+
 const initialState = {
   login: "",
   email: "",
@@ -24,6 +28,8 @@ export default function RegisterScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [focused, setFocused] = useState("");
   const [state, setState] = useState(initialState);
+
+  const dispatch = useDispatch();
 
   const keyboardHide = () => {
     if (!isShowKeyboard) {
@@ -37,6 +43,7 @@ export default function RegisterScreen({ navigation }) {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
     console.log(state);
+    dispatch(authSignUpUser(state));
     setState(initialState);
   };
 
