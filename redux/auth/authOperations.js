@@ -49,7 +49,7 @@ export const authSignInUser =
     }
   };
 
-export const authSignOutUser = () => async (dispath, getState) => {
+export const authSignOutUser = () => async (dispatch, getState) => {
   try {
     await signOut(auth);
     dispatch(authSignOut());
