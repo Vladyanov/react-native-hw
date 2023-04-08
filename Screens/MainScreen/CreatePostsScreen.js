@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Camera } from "expo-camera";
+import { useSelector } from "react-redux";
+import { Camera, CameraType } from "expo-camera";
 import * as Location from "expo-location";
+import { storage } from "../../firebase/config";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
 import {
   View,
@@ -14,15 +19,50 @@ import {
 import SvgCameraShot from "../../assets/svg/cameraShot";
 
 const CreatePostsScreen = ({ navigation }) => {
-  const [camera, setCamera] = useState(null);
+  const [camera, setCamera] = useState(CameraType.back);
   const [photo, setPhoto] = useState(undefined);
+  const [comment, setComment] = useState("");
+  const [location, setLocation] = useState("");
+  const [cameraReady, setCameraReady] = useState(false);
+
+  const { userId, nickname } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    (async () => {
+      await Camera.requestCameraPermissionsAsync();
+    })();
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     await Camera.requestCameraPermissionsAsync();
+  //   })();
+  // }, []);
 
   const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();
-    setPhoto(photo.uri);
-    const location = await Location.getCurrentPositionAsync({});
-    console.log("latitude", location.coords.latitude);
-    console.log("longitude", location.coords.longitude);
+    try {
+      const photo = await camera.takePictureAsync();
+      setPhoto(photo.uri);
+      const location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      console.log("latitude", location.coords.latitude);
+      console.log("longitude", location.coords.longitude);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleCameraReady = () => {
+    setCameraReady(true);
   };
 
   // запрос на предоставление данных локации
@@ -37,13 +77,59 @@ const CreatePostsScreen = ({ navigation }) => {
   }, []);
 
   const sendPhoto = () => {
-    // console.log("navigation", navigation);
+    uploadPostToServer();
     navigation.navigate("DefaultScreen", { photo });
+  };
+
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToServer();
+
+    try {
+      const db = getFirestore();
+      const newCollectionRef = collection(db, "posts");
+      await addDoc(newCollectionRef, {
+        photo,
+        comment,
+        location: location.coords,
+        userId,
+        nickname,
+      });
+      console.log(location);
+      console.log(`Колекція створена успішно!`);
+    } catch (error) {
+      console.error("Помилка при створенні колекції:", error);
+    }
+  };
+
+  const uploadPhotoToServer = async () => {
+    try {
+      const response = await fetch(photo);
+      const file = await response.blob();
+      const uniquePostId = Date.now().toString();
+
+      const data = ref(storage, `postImage/${uniquePostId}`);
+      await uploadBytes(data, file);
+
+      const processedPhoto = await getDownloadURL(data);
+      return processedPhoto;
+
+      // const data = await db
+      //   .storage()
+      //   .ref(`postImage/${uniquePostId}`)
+      //   .put(file);
+      // console.log("data: ", data);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} ref={setCamera}>
+      <Camera
+        style={styles.camera}
+        ref={setCamera}
+        onCameraReady={handleCameraReady}
+      >
         {photo && (
           <View style={styles.takePhotoContainer}>
             <Image
@@ -68,6 +154,7 @@ const CreatePostsScreen = ({ navigation }) => {
           placeholder="Name..."
           placeholderTextColor="#BDBDBD"
           style={styles.input}
+          onChangeText={setComment}
         />
         <TextInput
           placeholder="Location"

@@ -8,17 +8,29 @@ import {
   Text,
 } from "react-native";
 
+import { onSnapshot, collection } from "firebase/firestore";
+import { db } from "../../firebase/config";
+
 import SvgMap from "../../assets/svg/mapIcon";
 import SvgComments from "../../assets/svg/messageIcon";
 
 const DefaultPostsScreen = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
+  const getAllPost = async () => {
+    try {
+      onSnapshot(collection(db, "posts"), (data) => {
+        setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      });
+    } catch (error) {
+      console.log(error.message);
     }
-  }, [route.params]);
+  };
+
+  useEffect(() => {
+    getAllPost();
+  }, []);
+
   console.log("posts", posts);
   return (
     <View style={styles.container}>
@@ -37,19 +49,26 @@ const DefaultPostsScreen = ({ route, navigation }) => {
               source={{ uri: item.photo }}
               style={{ width: "100%", height: 200 }}
             />
+            <View style={styles.commentWrapper}>
+              <Text style={styles.comment}>{item.comment}</Text>
+            </View>
             <View style={styles.wrapper}>
               <TouchableOpacity
                 style={{ marginRight: 10 }}
-                onPress={() => navigation.navigate("Comments")}
+                onPress={() =>
+                  navigation.navigate("Comments", { postId: item.id })
+                }
               >
                 <View style={{ flexDirection: "row" }}>
                   <SvgComments size={40} />
-                  <Text>0</Text>
+                  <Text>Comments</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ marginRight: 10 }}
-                onPress={() => navigation.navigate("Map")}
+                onPress={() =>
+                  navigation.navigate("Map", { location: item.location })
+                }
               >
                 <View style={{ flexDirection: "row" }}>
                   <SvgMap size={40} />
@@ -81,6 +100,14 @@ const styles = StyleSheet.create({
 
     width: "100%",
     justifyContent: "space-between",
+  },
+  commentWrapper: {
+    width: "100%",
+    padding: 5,
+    textAlign: "left",
+  },
+  comment: {
+    fontWeight: "bold",
   },
 });
 
